@@ -3,9 +3,9 @@ import sys
 import threading
 from PySide6.QtWidgets import QApplication
 
-from Overlay import Overlay
 from WebSocketClient import WebSocketClient
 from logging_config import setup_logging
+from ui.Overlay import Overlay
 
 setup_logging()
 

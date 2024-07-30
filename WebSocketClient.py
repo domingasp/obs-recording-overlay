@@ -31,6 +31,7 @@ class WebSocketClient:
         logger.info(
             f'Connection lost. Is OBS running? | Code "{close_status_code}" | Message "{close_msg}"'
         )
+        self.overlay.update_connected(False)
 
     def on_message(self, ws, message):
         """Websocket message handler.
@@ -54,10 +55,12 @@ class WebSocketClient:
             elif data["op"] == 2:
                 if data["d"]["negotiatedRpcVersion"] == 1:
                     logger.info("Authenticated successfully")
+                    self.overlay.update_connected(True)
                 else:
                     logger.info(
                         "Failed to authenticate - is your OBS websocket password correct?"
                     )
+                    self.overlay.update_connected(False)
             elif data["op"] == 5:
                 state = data["d"]["eventData"]["outputState"]
                 obs_recording_state = "stopped"
