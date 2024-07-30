@@ -1,22 +1,35 @@
 import ctypes
 import tkinter as tk
+from PIL import Image, ImageTk
+
+def load_image(path):
+    image = Image.open(path)
+    image.resize((20, 20), Image.LANCZOS)
+    return ImageTk.PhotoImage(image)
 
 
 class Overlay:
     def __init__(self, root):
+        self.load_overlay_images()
+
         self.root = root
-        self.label = tk.Label(root, text="Initial", bg="green")
+        self.label = tk.Label(root, image=self.images['pausedImage'], bg='blue', borderwidth=0, highlightthickness=0)
 
         self.setup_ui()
 
         self.root.after(100, lambda: self.allow_clickthrough())
 
+    def load_overlay_images(self):
+        self.images = {
+            'pausedImage': load_image('assets/paused-icon.png')
+        }
+
     def setup_ui(self):
         self.root.title("overlay")
         self.root.attributes("-topmost", True)
         self.root.attributes("-fullscreen", True)
-        self.root.attributes("-transparentcolor", "red")
-        self.root.configure(bg="red")
+        self.root.attributes("-transparentcolor", "blue")
+        self.root.configure(bg="blue")
         self.root.overrideredirect(True)
 
     def position_label(self):
@@ -31,7 +44,7 @@ class Overlay:
         self.label.place(x=x_pos, y=y_pos)
 
     def update_label(self, text):
-        self.label.config(text=text)
+        self.label.config(image=self.images['pausedImage'])
         if text == 'stopped':
             self.label.place_forget()
         else:
