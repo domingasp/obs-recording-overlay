@@ -27,6 +27,9 @@ def generate_auth_response(salt, challenge):
     auth_response = base64.b64encode(final_hash).decode()
     return auth_response
 
+def update_obs_recording_state_file(state):
+    with open('obs_recording_state.txt', 'w+') as file:
+        file.write(state)
 
 def on_message(ws, message):
     """Websocket message handler.
@@ -51,7 +54,14 @@ def on_message(ws, message):
             else:
                 logger.info("Failed to authenticate - is your OBS websocket password correct?")
         elif data['op'] == 5:
-            pass
+            state = data['d']['eventData']['outputState']
+            obs_recording_state = 'stopped'
+            if 'OUTPUT_STARTED' in state or 'OUTPUT_RESUMED' in state:
+                obs_recording_state = 'recording'
+            elif 'OUTPUT_PAUSED' in state:
+                obs_recording_state = 'paused'
+
+            update_obs_recording_state_file(obs_recording_state)
 
 def on_open(ws):
     auth_payload = {"request-type": "GetAuthRequired", "message-id": "auth"}
