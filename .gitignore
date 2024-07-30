@@ -1,5 +1,6 @@
 .venv
 __pycache__
+.vscode
 
 obs_password.txt
 obs_recording_state.txt

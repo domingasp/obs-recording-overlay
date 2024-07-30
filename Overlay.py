@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QSystemTrayIcon, QMenu
+from PySide6.QtCore import Qt, QPoint
+from PySide6.QtGui import QPixmap, QIcon, QAction
 
 
 def image_to_qpixmap(path):
@@ -19,6 +19,7 @@ class Overlay(QWidget):
         self.setup_window()
         self.setup_label()
         self.setup_layout()
+        self.setup_tray()
 
     def setup_window(self):
         self.setWindowTitle("overlay")
@@ -36,7 +37,7 @@ class Overlay(QWidget):
         self.label = QLabel()
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setStyleSheet(
-            "background-color: transparent; color: white; padding: 10px;"
+            "background-color: transparent; padding: 10px;"
         )
         self.label.resize(40, 40)
 
@@ -45,6 +46,37 @@ class Overlay(QWidget):
         layout.addWidget(self.label)
         layout.setAlignment(Qt.AlignBottom | Qt.AlignLeft)
         self.setLayout(layout)
+
+    def setup_tray(self):
+        self.tray_icon = QSystemTrayIcon(self)
+        self.tray_icon.setIcon(QIcon('assets/obs-recording-overlay-logo.png'))
+        self.tray_icon.setToolTip('OBS Recording Overlay')
+
+        tray_menu = QMenu(self)
+        tray_menu.setStyleSheet("""
+            QMenu {
+                padding: 2px;
+                background-color: #2C2E33;
+                min-width: 50px;
+            }
+            QMenu::item {
+                padding: 4px 12px;
+                font-size: 13px;
+                width: 100%;
+                border-radius: 4px;
+                line-height: 15px;
+            }
+            QMenu::item:selected {
+                background-color: #f03e3e;
+            }
+        """)
+
+        exit_action = QAction("Exit", self)
+        exit_action.triggered.connect(QApplication.instance().quit)
+        tray_menu.addAction(exit_action)
+
+        self.tray_icon.setContextMenu(tray_menu)
+        self.tray_icon.show()
 
     def update_label(self, obs_status):
         icon = "pausedIcon" if obs_status == "paused" else "recordIcon"
