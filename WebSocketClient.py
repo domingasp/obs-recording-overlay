@@ -61,7 +61,7 @@ class WebSocketClient:
             elif data["op"] == 5:
                 state = data["d"]["eventData"]["outputState"]
                 obs_recording_state = "stopped"
-                if "OUTPUT_STARTED" in state or "OUTPUT_RESUMED" in state:
+                if "OUTPUT_START" in state or "OUTPUT_RESUMED" in state:
                     obs_recording_state = "recording"
                 elif "OUTPUT_PAUSED" in state:
                     obs_recording_state = "paused"

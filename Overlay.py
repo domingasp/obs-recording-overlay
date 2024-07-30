@@ -5,12 +5,10 @@ import tkinter as tk
 class Overlay:
     def __init__(self, root):
         self.root = root
-        self.label = tk.Label(root, text="New Overlay", bg="green")
-        self.label.pack()
+        self.label = tk.Label(root, text="Initial", bg="green")
 
         self.setup_ui()
 
-        self.root.after(100, lambda: self.position_label())
         self.root.after(100, lambda: self.allow_clickthrough())
 
     def setup_ui(self):
@@ -34,6 +32,10 @@ class Overlay:
 
     def update_label(self, text):
         self.label.config(text=text)
+        if text == 'stopped':
+            self.label.place_forget()
+        else:
+            self.position_label()
 
     def allow_clickthrough(self):
         """Adds windows flags to `hwnd` allowing clickthrough.
