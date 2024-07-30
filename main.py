@@ -1,9 +1,14 @@
 import base64
 import hashlib
 import hmac
+import logging
 import threading
+import time
 import websocket
 import json
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 obs_password = ""
 with open("obs_password.txt") as file:
@@ -24,6 +29,10 @@ def generate_auth_response(salt, challenge):
 
 
 def on_message(ws, message):
+    """Websocket message handler.
+    
+    For details on OBS Opcodes - https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#websocketclosecodemessagedecodeerror
+    """
     data = json.loads(message)
     if "op" in data:
         if data["op"] == 0:
@@ -38,19 +47,30 @@ def on_message(ws, message):
             ws.send(json.dumps(identify_payload))
         elif data["op"] == 2:
             if data["d"]["negotiatedRpcVersion"] == 1:
-                print("Authenticated successfully")
-
+                logger.info("Authenticated successfully")
+            else:
+                logger.info("Failed to authenticate - is your OBS websocket password correct?")
+        elif data['op'] == 5:
+            pass
 
 def on_open(ws):
     auth_payload = {"request-type": "GetAuthRequired", "message-id": "auth"}
     ws.send(json.dumps(auth_payload))
 
 
-if __name__ == "__main__":
-    websocket.enableTrace(True)
-    ws = websocket.WebSocketApp(
-        "ws://localhost:4455",
-        on_message=on_message,
+def on_close(ws, close_status_code, close_msg):
+    logger.info(
+        f'Connection lost. Is OBS running? | Code "{close_status_code}" | Message "{close_msg}"'
     )
 
-    ws.run_forever()
+
+if __name__ == "__main__":
+    websocket.enableTrace(True)
+    while True:
+        ws = websocket.WebSocketApp(
+            "ws://localhost:4455", on_message=on_message, on_close=on_close
+        )
+        ws.run_forever()
+
+        time.sleep(5)
+        logger.info("Attempting to reconnect...")
