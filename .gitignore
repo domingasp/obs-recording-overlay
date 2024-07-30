@@ -1,3 +1,6 @@
 .venv
+__pycache__
+
 obs_password.txt
 obs_recording_state.txt
+logfile.log
