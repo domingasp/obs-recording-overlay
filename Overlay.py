@@ -1,68 +1,62 @@
-import ctypes
-import tkinter as tk
-from PIL import Image, ImageTk
-
-def load_image(path):
-    image = Image.open(path)
-    image.resize((20, 20), Image.LANCZOS)
-    return ImageTk.PhotoImage(image)
+from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap
 
 
-class Overlay:
-    def __init__(self, root):
-        self.load_overlay_images()
+def image_to_qpixmap(path):
+    pixmap = QPixmap(path)
+    return pixmap.scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
-        self.root = root
-        self.label = tk.Label(root, image=self.images['pausedImage'], bg='blue', borderwidth=0, highlightthickness=0)
 
+class Overlay(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        self.load_images()
         self.setup_ui()
 
-        self.root.after(100, lambda: self.allow_clickthrough())
-
-    def load_overlay_images(self):
-        self.images = {
-            'pausedImage': load_image('assets/paused-icon.png')
-        }
-
     def setup_ui(self):
-        self.root.title("overlay")
-        self.root.attributes("-topmost", True)
-        self.root.attributes("-fullscreen", True)
-        self.root.attributes("-transparentcolor", "blue")
-        self.root.configure(bg="blue")
-        self.root.overrideredirect(True)
+        self.setup_window()
+        self.setup_label()
+        self.setup_layout()
 
-    def position_label(self):
-        """Moves label to bottom right of screen."""
-        self.label.update_idletasks()
-        label_width = self.label.winfo_width()
-        label_height = self.label.winfo_height()
+    def setup_window(self):
+        self.setWindowTitle("overlay")
+        self.setWindowFlags(
+            Qt.WindowStaysOnTopHint
+            | Qt.FramelessWindowHint
+            | Qt.WindowTransparentForInput
+            | Qt.Tool
+        )
 
-        x_pos = self.root.winfo_screenwidth() - label_width
-        y_pos = self.root.winfo_screenheight() - label_height
+        self.setAttribute(Qt.WA_TransparentForMouseEvents)
+        self.setAttribute(Qt.WA_TranslucentBackground, True)
 
-        self.label.place(x=x_pos, y=y_pos)
+    def setup_label(self):
+        self.label = QLabel()
+        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setStyleSheet(
+            "background-color: transparent; color: white; padding: 10px;"
+        )
+        self.label.resize(40, 40)
 
-    def update_label(self, text):
-        self.label.config(image=self.images['pausedImage'])
-        if text == 'stopped':
-            self.label.place_forget()
+    def setup_layout(self):
+        layout = QVBoxLayout()
+        layout.addWidget(self.label)
+        layout.setAlignment(Qt.AlignBottom | Qt.AlignLeft)
+        self.setLayout(layout)
+
+    def update_label(self, obs_status):
+        icon = "pausedIcon" if obs_status == "paused" else "recordIcon"
+        self.label.setPixmap(self.images[icon])
+
+        if obs_status == "stopped":
+            self.label.setHidden(True)
         else:
-            self.position_label()
+            self.label.setHidden(False)
 
-    def allow_clickthrough(self):
-        """Adds windows flags to `hwnd` allowing clickthrough.
-
-        WS_EX_LAYERED, WS_EX_TRANSPARENT, SWP_NOMOVE, SWP_NOSIZE
-        SWP_NOACTIVATE, SWP_TOPMOST
-        """
-        user32 = ctypes.windll.user32
-        hwnd = user32.FindWindowW(None, "overlay")
-        if hwnd:
-            styles = user32.GetWindowLongW(hwnd, -20)
-
-            # Add WS_EX_LAYERED | WS_EX_TRANSPARENT
-            user32.SetWindowLongW(hwnd, -20, styles | 0x80000 | 0x20)
-
-            # Add SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_TOPMOST
-            user32.SetWindowPos(hwnd, -1, 0, 0, 0, 0, 0x0010 | 0x0001 | 0x0004 | 0x0008)
+    def load_images(self):
+        self.images = {
+            "pausedIcon": image_to_qpixmap("assets/paused-icon.png"),
+            "recordIcon": image_to_qpixmap("assets/record-icon.png"),
+        }

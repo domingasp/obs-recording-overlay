@@ -1,20 +1,22 @@
 import logging
+import sys
 import threading
-import tkinter as tk
+from PySide6.QtWidgets import QApplication
 
+from Overlay import Overlay
 from WebSocketClient import WebSocketClient
 from logging_config import setup_logging
-from Overlay import Overlay
 
 setup_logging()
 
 logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    overlay = Overlay(root)
+    app = QApplication(sys.argv)
+    overlay = Overlay()
+    overlay.showFullScreen()
 
     ws_client = WebSocketClient(overlay)
     threading.Thread(target=ws_client.run, daemon=True).start()
 
-    root.mainloop()
+    sys.exit(app.exec())
