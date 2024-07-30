@@ -3,6 +3,7 @@ from PySide6.QtGui import QPixmap, QPainter
 
 
 class ColorPixmap(QPixmap):
+    """Updates the color of a pixmap - useful for change SVG color."""
     def __init__(self, source_pixmap, color):
         super().__init__(source_pixmap.size())
         self.fill(Qt.transparent)

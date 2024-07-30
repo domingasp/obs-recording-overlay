@@ -37,6 +37,7 @@ SYSTEM_TRAY_STYLESHEET = """
 
 
 class Overlay(QWidget):
+    """Top most window overlay with clickthrough capabilities. Includes system tray."""
     def __init__(self):
         super().__init__()
 
@@ -50,7 +51,8 @@ class Overlay(QWidget):
         self.setup_tray()
 
     def setup_window(self):
-        self.setWindowTitle("overlay")
+        """Initialised overlay window by setting relevant Window flags and a title."""
+        self.setWindowTitle("OBS Recording Overlay")
         self.setWindowFlags(
             Qt.WindowStaysOnTopHint
             | Qt.FramelessWindowHint
@@ -62,18 +64,21 @@ class Overlay(QWidget):
         self.setAttribute(Qt.WA_TranslucentBackground, True)
 
     def setup_label(self):
+        """Initialises overlay label."""
         self.label = QLabel()
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setStyleSheet("background-color: transparent; padding: 10px;")
         self.label.resize(40, 40)
 
     def setup_layout(self):
+        """Initialised layout with bottom-left alignment."""
         layout = QVBoxLayout()
         layout.addWidget(self.label)
         layout.setAlignment(Qt.AlignBottom | Qt.AlignLeft)
         self.setLayout(layout)
 
     def setup_tray(self):
+        """Initialises system tray icon."""
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(QIcon("assets/obs-recording-overlay-logo.png"))
         self.tray_icon.setToolTip("OBS Recording Overlay")
@@ -84,10 +89,10 @@ class Overlay(QWidget):
         exit_action = QAction("Exit", self)
         exit_action.triggered.connect(QApplication.instance().quit)
 
-        self.connected_state_icon_label = IconLabel()
-        self.connected_state_icon_label.set_not_connected()
+        self.connection_status_icon_label = IconLabel()
+        self.connection_status_icon_label.set_not_connected()
         connected_state_action = QWidgetAction(self)
-        connected_state_action.setDefaultWidget(self.connected_state_icon_label)
+        connected_state_action.setDefaultWidget(self.connection_status_icon_label)
 
         tray_menu.addAction(connected_state_action)
         tray_menu.addSeparator()
@@ -97,6 +102,7 @@ class Overlay(QWidget):
         self.tray_icon.show()
 
     def update_label(self, obs_status):
+        """Updates overlay image. Hides label if not recording."""
         icon = "pausedIcon" if obs_status == "paused" else "recordIcon"
         self.label.setPixmap(self.images[icon])
 
@@ -106,12 +112,14 @@ class Overlay(QWidget):
             self.label.setHidden(False)
 
     def update_connected(self, is_connected):
+        """Updates connected status icon and label according to `is_connected`."""
         if is_connected:
-            self.connected_state_icon_label.set_connected()
+            self.connection_status_icon_label.set_connected()
         else:
-            self.connected_state_icon_label.set_not_connected()
+            self.connection_status_icon_label.set_not_connected()
 
     def load_images(self):
+        """Loads the default overlay images."""
         self.images = {
             "pausedIcon": image_to_qpixmap("assets/paused-icon.png"),
             "recordIcon": image_to_qpixmap("assets/record-icon.png"),
