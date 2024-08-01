@@ -48,15 +48,17 @@ class Overlay(QWidget):
 
     def setup_label(self):
         """Initialises overlay label."""
-        self.label = QLabel()
-        self.label.setAlignment(Qt.AlignCenter)
-        self.label.setStyleSheet("background-color: transparent; padding: 10px;")
-        self.label.resize(40, 40)
+        self.overlay_label = QLabel()
+        self.overlay_label.setAlignment(Qt.AlignCenter)
+        self.overlay_label.setStyleSheet(
+            "background-color: transparent; padding: 10px;"
+        )
+        self.overlay_label.resize(40, 40)
 
     def setup_layout(self):
         """Initialised layout with bottom-left alignment."""
         layout = QVBoxLayout()
-        layout.addWidget(self.label)
+        layout.addWidget(self.overlay_label)
         layout.setAlignment(Qt.AlignBottom | Qt.AlignLeft)
         self.setLayout(layout)
 
@@ -91,12 +93,12 @@ class Overlay(QWidget):
     def update_label(self, obs_status):
         """Updates overlay image. Hides label if not recording."""
         icon = "pausedIcon" if obs_status == "paused" else "recordIcon"
-        self.label.setPixmap(self.images[icon])
+        self.overlay_label.setPixmap(self.images[icon])
 
         if obs_status == "stopped":
-            self.label.setHidden(True)
+            self.overlay_label.setHidden(True)
         else:
-            self.label.setHidden(False)
+            self.overlay_label.setHidden(False)
 
     def update_connected(self, is_connected):
         """Updates connected status icon and label according to `is_connected`."""
@@ -104,6 +106,7 @@ class Overlay(QWidget):
             self.connection_status_icon_label.set_connected()
         else:
             self.connection_status_icon_label.set_not_connected()
+            self.overlay_label.setHidden(True)
 
     def load_images(self):
         """Loads the default overlay images."""

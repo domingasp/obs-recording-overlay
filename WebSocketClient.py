@@ -72,18 +72,27 @@ class WebSocketClient:
                 if data["d"]["negotiatedRpcVersion"] == 1:
                     logger.info("Authenticated successfully")
                     self.overlay.update_connected(True)
+                    self.request_recording_status()
                 else:
                     logger.info(
                         "Failed to authenticate - is your OBS websocket password correct?"
                     )
                     self.overlay.update_connected(False)
-            elif data["op"] == 5:
-                state = data["d"]["eventData"]["outputState"]
+            elif data["op"] == 5 or data["d"]["requestId"] == "getRecordStatus":
                 obs_recording_state = "stopped"
-                if "OUTPUT_START" in state or "OUTPUT_RESUMED" in state:
-                    obs_recording_state = "recording"
-                elif "OUTPUT_PAUSED" in state:
-                    obs_recording_state = "paused"
+
+                if data["op"] == 5:
+                    state = data["d"]["eventData"]["outputState"]
+                    if "OUTPUT_START" in state or "OUTPUT_RESUMED" in state:
+                        obs_recording_state = "recording"
+                    elif "OUTPUT_PAUSED" in state:
+                        obs_recording_state = "paused"
+                else:
+                    state = data["d"]["responseData"]
+                    if state["outputPaused"]:
+                        obs_recording_state = "paused"
+                    elif state["outputActive"]:
+                        obs_recording_state = "recording"
 
                 self.overlay.update_label(obs_recording_state)
 
@@ -113,3 +122,14 @@ class WebSocketClient:
             self.ws.close()
         self._retry_event.set()
         logger.info("Connection configuration updated, attempting to connect...")
+
+    def request_recording_status(self):
+        if self.ws and self.ws.sock and self.ws.sock.connected:
+            request_payload = {
+                "op": 6,
+                "d": {
+                    "requestType": "GetRecordStatus",
+                    "requestId": "getRecordStatus",
+                },
+            }
+            self.ws.send(json.dumps(request_payload))
