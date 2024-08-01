@@ -13,6 +13,12 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setQuitOnLastWindowClosed(False)
+
+    with open("ui/styles/styles.qss", "r") as file:
+        stylesheet = file.read()
+    app.setStyleSheet(stylesheet)
+
     overlay = Overlay()
     overlay.showFullScreen()
 

@@ -10,34 +10,14 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon, QAction
 
+from ui.ConnectionSetupWindow import ConnectionSetupWindow
 from ui.IconLabel import IconLabel
 from ui.ui_utilities import image_to_qpixmap
-
-SYSTEM_TRAY_STYLESHEET = """
-            QMenu {
-                padding: 2px;
-                background: #2C2E33;
-                min-width: 150px;
-            }
-            QMenu::item {
-                padding: 4px 12px;
-                font-size: 13px;
-                width: 100%;
-                border-radius: 4px;
-            }
-            QMenu::item:selected {
-                background: #f03e3e;
-            }
-            QMenu::separator {
-                background: #495057;
-                height: 0.05em;
-                margin: 2px 0px;
-            }     
-        """
 
 
 class Overlay(QWidget):
     """Top most window overlay with clickthrough capabilities. Includes system tray."""
+
     def __init__(self):
         super().__init__()
 
@@ -83,9 +63,6 @@ class Overlay(QWidget):
         self.tray_icon.setIcon(QIcon("assets/obs-recording-overlay-logo.png"))
         self.tray_icon.setToolTip("OBS Recording Overlay")
 
-        tray_menu = QMenu(self)
-        tray_menu.setStyleSheet(SYSTEM_TRAY_STYLESHEET)
-
         exit_action = QAction("Exit", self)
         exit_action.triggered.connect(QApplication.instance().quit)
 
@@ -94,7 +71,14 @@ class Overlay(QWidget):
         connected_state_action = QWidgetAction(self)
         connected_state_action.setDefaultWidget(self.connection_status_icon_label)
 
+        connection_setup_action = QAction("Configure Connection", self)
+        connection_setup_action.triggered.connect(self.show_connection_setup)
+
+        tray_menu = QMenu(self)
+
         tray_menu.addAction(connected_state_action)
+        tray_menu.addSeparator()
+        tray_menu.addAction(connection_setup_action)
         tray_menu.addSeparator()
         tray_menu.addAction(exit_action)
 
@@ -124,3 +108,7 @@ class Overlay(QWidget):
             "pausedIcon": image_to_qpixmap("assets/paused-icon.png"),
             "recordIcon": image_to_qpixmap("assets/record-icon.png"),
         }
+
+    def show_connection_setup(self):
+        connection_setup_window = ConnectionSetupWindow()
+        connection_setup_window.exec_()
