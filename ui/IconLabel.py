@@ -10,6 +10,7 @@ from ui.ui_utilities import load_and_color_icon_pixmap
 
 class IconLabel(QWidget):
     """Displays a text label with an icon on the left."""
+
     def __init__(self, parent=None):
         super().__init__(parent)
 

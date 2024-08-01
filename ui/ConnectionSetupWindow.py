@@ -14,10 +14,7 @@ from ui.ui_utilities import load_and_color_icon_pixmap
 
 
 class ConnectionSetupWindow(QDialog):
-    def __init__(
-        self,
-        settings
-    ):
+    def __init__(self, settings):
         super().__init__()
         self.settings = settings
         self.load_icons()
