@@ -2,16 +2,20 @@ import logging
 
 
 def setup_logging():
-    logging.basicConfig(level=logging.INFO)
-    logFormatter = logging.Formatter(
+    root_logger = logging.getLogger()
+    if root_logger.hasHandlers():
+        root_logger.handlers.clear()
+
+    log_formatter = logging.Formatter(
         "%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s] %(message)s"
     )
-    rootLogger = logging.getLogger()
 
-    fileHandler = logging.FileHandler("logfile.log")
-    fileHandler.setFormatter(logFormatter)
-    rootLogger.addHandler(fileHandler)
+    file_handler = logging.FileHandler("logfile.log")
+    file_handler.setFormatter(log_formatter)
+    root_logger.addHandler(file_handler)
 
-    consoleHandler = logging.StreamHandler()
-    consoleHandler.setFormatter(logFormatter)
-    rootLogger.addHandler(consoleHandler)
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(log_formatter)
+    root_logger.addHandler(console_handler)
+
+    root_logger.setLevel(logging.INFO)

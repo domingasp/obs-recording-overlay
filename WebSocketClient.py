@@ -2,6 +2,7 @@ import base64
 import hashlib
 import json
 import logging
+import threading
 import time
 import websocket
 
@@ -13,15 +14,30 @@ class WebSocketClient:
         self.overlay = overlay
         self.ws = None
 
-    def run(self):
-        ws = websocket.WebSocketApp(
-            "ws://localhost:4455", on_message=self.on_message, on_close=self.on_close
-        )
+        self.websocket_url = "localhost"
+        self.websocket_port = "4455"
+        self.websocket_password = ""
 
-        while True:
-            ws.run_forever()
-            time.sleep(5)
-            logger.info("Attempting to reconnect...")
+        self._stop_event = threading.Event()
+        self._retry_event = threading.Event()
+
+    def run(self):
+        while not self._stop_event.is_set():
+            if self._retry_event.is_set():
+                self._retry_event.clear()
+                self.connect()
+            else:
+                self.connect()
+                self.ws.close()
+                self._retry_event.wait(timeout=5)
+
+    def connect(self):
+        self.ws = websocket.WebSocketApp(
+            f"ws://{self.websocket_url}:{self.websocket_port}",
+            on_message=self.on_message,
+            on_close=self.on_close,
+        )
+        self.ws.run_forever()
 
     def on_open(self, ws):
         auth_payload = {"request-type": "GetAuthRequired", "message-id": "auth"}
@@ -72,11 +88,7 @@ class WebSocketClient:
                 self.overlay.update_label(obs_recording_state)
 
     def generate_auth_response(self, salt, challenge):
-        obs_password = ""
-        with open("obs_password.txt") as file:
-            obs_password = file.read()
-
-        password_salt = obs_password + salt
+        password_salt = self.websocket_password + salt
 
         sha256_hash = hashlib.sha256(password_salt.encode()).digest()
         base64_secret = base64.b64encode(sha256_hash).decode()
@@ -86,3 +98,18 @@ class WebSocketClient:
         final_hash = hashlib.sha256(secret_challenge.encode()).digest()
         auth_response = base64.b64encode(final_hash).decode()
         return auth_response
+
+    def set_websocket_url(self, url):
+        self.websocket_url = url
+
+    def set_websocket_port(self, port):
+        self.websocket_port = port
+
+    def set_websocket_password(self, password):
+        self.websocket_password = password
+
+    def retry_connection(self):
+        if self.ws:
+            self.ws.close()
+        self._retry_event.set()
+        logger.info("Connection configuration updated, attempting to connect...")

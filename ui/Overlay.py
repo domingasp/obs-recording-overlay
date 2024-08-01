@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
     QMenu,
     QWidgetAction,
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Slot, QSettings
 from PySide6.QtGui import QIcon, QAction
 
 from ui.ConnectionSetupWindow import ConnectionSetupWindow
@@ -20,6 +20,9 @@ class Overlay(QWidget):
 
     def __init__(self):
         super().__init__()
+        self.websocket_client = None
+
+        self.settings = QSettings("Lemtale", "OBS Recording Overlay")
 
         self.load_images()
         self.setup_ui()
@@ -109,6 +112,39 @@ class Overlay(QWidget):
             "recordIcon": image_to_qpixmap("assets/record-icon.png"),
         }
 
+    def set_websocket_client(self, websocket_client):
+        self.websocket_client = websocket_client
+        self.update_websocket_client_connection_details()
+
+    def save_settings(self, url, port, password):
+        self.settings.setValue("websocket_url", url)
+        self.settings.setValue("websocket_port", port)
+        self.settings.setValue("websocket_password", password)
+        self.update_websocket_client_connection_details()
+
+    def update_websocket_client_connection_details(self):
+        self.websocket_client.set_websocket_url(
+            self.settings.value("websocket_url", "")
+        )
+        self.websocket_client.set_websocket_port(
+            self.settings.value("websocket_port", "")
+        )
+        self.websocket_client.set_websocket_password(
+            self.settings.value("websocket_password", "")
+        )
+        self.websocket_client.retry_connection()
+
     def show_connection_setup(self):
-        connection_setup_window = ConnectionSetupWindow()
-        connection_setup_window.exec_()
+        self.connection_setup_window = ConnectionSetupWindow(self.settings)
+        self.connection_setup_window.accepted.connect(self.on_connection_setup_accepted)
+        self.connection_setup_window.exec()
+
+    @Slot()
+    def on_connection_setup_accepted(self):
+        websocket_connection_details = self.connection_setup_window.get_data()
+
+        url = websocket_connection_details["url"]
+        port = websocket_connection_details["port"]
+        password = websocket_connection_details["password"]
+        print(url, port, password)
+        self.save_settings(url, port, password)

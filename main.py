@@ -25,4 +25,6 @@ if __name__ == "__main__":
     ws_client = WebSocketClient(overlay)
     threading.Thread(target=ws_client.run, daemon=True).start()
 
+    overlay.set_websocket_client(websocket_client=ws_client)
+    
     sys.exit(app.exec())

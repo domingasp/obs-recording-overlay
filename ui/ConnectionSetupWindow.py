@@ -16,8 +16,10 @@ from ui.ui_utilities import load_and_color_icon_pixmap
 class ConnectionSetupWindow(QDialog):
     def __init__(
         self,
+        settings
     ):
         super().__init__()
+        self.settings = settings
         self.load_icons()
 
         self.setWindowIcon(QIcon("assets/obs-recording-overlay-logo.png"))
@@ -30,6 +32,8 @@ class ConnectionSetupWindow(QDialog):
         self.setup_url_fields()
         self.setup_obs_password_field()
         self.setup_save_button()
+
+        self.set_initial_field_values()
 
     def setup_url_fields(self):
         """Initialize url and port fields."""
@@ -84,9 +88,13 @@ class ConnectionSetupWindow(QDialog):
     def setup_save_button(self):
         """Initialize save button."""
         self.save_button = QPushButton("Save")
+        self.save_button.clicked.connect(self.accept)
         self.main_layout.addWidget(self.save_button)
 
-        self.validate_fields()
+    def set_initial_field_values(self):
+        self.url_field.setText(self.settings.value("websocket_url", ""))
+        self.port_field.setText(self.settings.value("websocket_port", ""))
+        self.password_field.setText(self.settings.value("websocket_password", ""))
 
     def toggle_password_visibility(self):
         """Toggle `password_field` visibility."""
@@ -106,7 +114,14 @@ class ConnectionSetupWindow(QDialog):
         ):
             self.save_button.setEnabled(True)
         else:
-            self.save_button.setDisabled(True)
+            self.save_button.setEnabled(False)
+
+    def get_data(self):
+        return {
+            "url": self.url_field.text(),
+            "port": self.port_field.text(),
+            "password": self.password_field.text(),
+        }
 
     def load_icons(self):
         """Loads default icons."""
