@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QToolButton,
     QHBoxLayout,
+    QSizePolicy
 )
 from PySide6.QtGui import QIcon, QIntValidator
 from PySide6.QtCore import Qt
@@ -21,7 +22,7 @@ class ConnectionSetupWindow(QDialog):
 
         self.setWindowIcon(QIcon("assets/obs-recording-overlay-logo.png"))
         self.setWindowTitle("Configure OBS Connection")
-        self.setMinimumWidth(300)
+        self.setFixedSize(300, 200)
 
         self.main_layout = QVBoxLayout()
         self.setLayout(self.main_layout)
@@ -74,7 +75,11 @@ class ConnectionSetupWindow(QDialog):
         self.toggle_visibility_button.setCheckable(True)
         self.toggle_visibility_button.setToolTip("Show/Hide Password")
         self.toggle_visibility_button.setCursor(Qt.PointingHandCursor)
+        self.toggle_visibility_button.setFixedHeight(34)
         self.toggle_visibility_button.clicked.connect(self.toggle_password_visibility)
+
+        size_policy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        self.toggle_visibility_button.setSizePolicy(size_policy)
 
         password_layout.addWidget(self.password_field)
         password_layout.addWidget(self.toggle_visibility_button)
