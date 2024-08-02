@@ -1,29 +1,22 @@
 import logging
 import sys
-import threading
 from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import QUrl
-from PySide6.QtGui import QGuiApplication
-from PySide6.QtQml import QQmlApplicationEngine
 
-from WebSocketClient import WebSocketClient
 from logging_config import setup_logging
-from ui.__Overlay import Overlay
+from ui.OverlayApp import OverlayApp
 
 setup_logging()
 
 logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
-    app = QGuiApplication()
-    engine = QQmlApplicationEngine()
-
-    engine.load(QUrl('ui/main.qml'))
+    app = QApplication(sys.argv)
+    overlay_app = OverlayApp(app=app)
+    sys.exit(app.exec())
 
     # if not engine.rootObjects():
     #     sys.exit(-1)
 
-    sys.exit(app.exec())
     # app = QApplication(sys.argv)
     # app.setQuitOnLastWindowClosed(False)
 
