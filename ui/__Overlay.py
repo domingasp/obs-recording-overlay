@@ -10,9 +10,9 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Slot, QSettings
 from PySide6.QtGui import QIcon, QAction
 
-from ui.ConnectionSetupWindow import ConnectionSetupWindow
-from ui.IconLabel import IconLabel
-from ui.ui_utilities import image_to_qpixmap
+from ui.__ConnectionSetupWindow import ConnectionSetupWindow
+from ui.__IconLabel import IconLabel
+from ui.__ui_utilities import image_to_qpixmap
 
 
 class Overlay(QWidget):
