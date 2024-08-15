@@ -1,0 +1,6 @@
+from typing import Protocol
+
+
+class IThemeController(Protocol):
+    def get_color(self, color_name: str) -> str: ...
+    def get_int_property(self, property_name: str) -> int: ...

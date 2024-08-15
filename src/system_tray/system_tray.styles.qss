@@ -1,0 +1,25 @@
+QMenu {
+    background: %menuColor%;
+    border: 1px solid %borderColor%;
+    padding: %menuPadding%px;
+    border-radius: %menuRadius%px;
+}
+QMenu::item {
+    padding: %itemPaddingY%px %itemPaddingX%px %itemPaddingY%px %itemPaddingX%px;
+    color: %menuItemColor%;
+    border-radius: %menuRadius%px;
+    font-size: %itemFontSize%px;
+    font-weight: 600;
+}
+QMenu::icon {
+    padding-left: %itemPaddingX%px;
+    padding-right: %iconSpacing%px;
+}
+QMenu::item:selected {
+    background: %borderColor%;
+}
+QMenu::separator {
+    background: %borderColor%;
+    height: 1px;
+    margin: %menuPadding%px 0px;
+}

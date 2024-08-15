@@ -10,4 +10,5 @@ The following compiliations will need to be completed before you can begin devel
 
 ```
 pyside6-rcc assets/assets.qrc -o assets/assets_rc.py
+pyside6-rcc src/stylesheets.qrc -o src/stylesheets_rc.py
 ```

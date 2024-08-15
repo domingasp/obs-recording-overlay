@@ -2,5 +2,8 @@
     <qresource prefix="/assets">
         <file>images/paused-icon.png</file>
         <file>images/record-icon.png</file>
+        <file>images/logo.png</file>
+        <file>icons/settings.svg</file>
+        <file>icons/power.svg</file>
     </qresource>
 </RCC>
