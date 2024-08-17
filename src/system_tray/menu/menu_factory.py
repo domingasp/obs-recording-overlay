@@ -1,6 +1,6 @@
 from typing import Literal, Union
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QApplication, QMenu
+from PySide6.QtWidgets import QApplication, QMenu, QWidgetAction
 from src.system_tray.menu.menu_factory_protocol import IMenuFactory
 from src.theme_controller_protocol import IThemeController
 from src.utils import replace_template_placeholders
@@ -13,7 +13,9 @@ class MenuFactory(IMenuFactory):
         self.theme_controller = theme_controller
 
     def create_menu(
-        self, actions: list[Union[QAction, Literal["separator"]]], stylesheet_path: str
+        self,
+        actions: list[Union[QAction, QWidgetAction, Literal["separator"]]],
+        stylesheet_path: str,
     ) -> QMenu:
         menu = QMenu()
         for action in actions:

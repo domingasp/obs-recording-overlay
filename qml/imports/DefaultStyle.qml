@@ -1,4 +1,5 @@
-import QtQuick 2.15
+pragma Singleton
+import QtQuick
 
 QtObject {
     id: theme
@@ -6,10 +7,18 @@ QtObject {
 
     // Values from mantine.dev
     readonly property color dark0: "#c9c9c9"
+    readonly property color dark3: "#696969"
     readonly property color dark4: "#424242"
+    readonly property color dark5: "#3b3b3b"
     readonly property color dark6: "#2e2e2e"
+    readonly property color dark7: "#242424"
 
     readonly property color red6: "#fa5252"
+
+    readonly property color green6: "#40c057"
+
+    readonly property color blue8: "#1971c2"
+    readonly property color blue9: "#1864ab"
 
     readonly property alias colorText: theme.dark0
 

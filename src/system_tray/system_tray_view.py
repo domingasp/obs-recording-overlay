@@ -1,12 +1,13 @@
 from typing import Literal, Union
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
-from PySide6.QtWidgets import QApplication, QSystemTrayIcon
+from PySide6.QtWidgets import QApplication, QSystemTrayIcon, QWidgetAction
 
 from src.system_tray.menu.menu_factory_protocol import IMenuFactory
 from src.system_tray.system_tray_view_protocol import ISystemTrayIconView
 from src.theme_controller_protocol import IThemeController
-from src.utils import create_colored_icon
+from src.utils import create_action, create_qml_action
+from src.system_tray.actions.tray_action_protocol import ITrayAction
 
 
 class SystemTrayIconView(ISystemTrayIconView):
@@ -16,30 +17,44 @@ class SystemTrayIconView(ISystemTrayIconView):
         qml_engine: QQmlApplicationEngine,
         menu_factory: IMenuFactory,
         theme_controller: IThemeController,
+        tray_actions: dict[str, ITrayAction],
         icon_path: str,
     ):
         self.app = app
         self.qml_engine = qml_engine
         self.menu_factory = menu_factory
         self.theme_controller = theme_controller
+        self.tray_actions = tray_actions
         self.icon = icon_path
 
     def create_tray_icon(self):
-        self.tray_icon = QSystemTrayIcon()
+        self.tray_icon = QSystemTrayIcon(self.app)
         self.tray_icon.setIcon(QIcon(self.icon))
 
-        self.action_configure_connection = self.__create_action(
+        self.action_connection_status = create_qml_action(
+            self.tray_icon, "qrc:/qml/ConnectionStatus.qml"
+        )
+        self.action_configure_connection = create_action(
             "Configure Connection",
             ":/assets/icons/settings.svg",
             self.theme_controller.get_color("colorText"),
+            parent=self.tray_icon,
         )
-        self.action_exit = self.__create_action(
+        self.action_exit = create_action(
             "Quit",
             ":/assets/icons/power.svg",
             self.theme_controller.get_color("colorText"),
+            parent=self.tray_icon,
         )
 
-        actions: list[Union[QAction, Literal["separator"]]] = [
+        self.action_configure_connection.triggered.connect(
+            self.tray_actions["configure_connection"].handle
+        )
+        self.action_exit.triggered.connect(self.tray_actions["quit"].handle)
+
+        actions: list[Union[QAction, QWidgetAction, Literal["separator"]]] = [
+            self.action_connection_status,
+            "separator",
             self.action_configure_connection,
             "separator",
             self.action_exit,
@@ -50,12 +65,3 @@ class SystemTrayIconView(ISystemTrayIconView):
             )
         )
         self.tray_icon.show()
-
-    def __create_action(
-        self, label: str, icon_path: str, icon_color_hex: str
-    ) -> QAction:
-        icon = create_colored_icon(icon_path, icon_color_hex)
-        return QAction(
-            icon,
-            label,
-        )
