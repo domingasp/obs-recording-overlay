@@ -2,7 +2,7 @@ from PySide6.QtCore import QUrl
 from PySide6.QtGui import QColor
 from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
 
-from src.theme_controller_protocol import IThemeController
+from src.controllers.theme_controller import IThemeController
 
 
 class ThemeController(IThemeController):

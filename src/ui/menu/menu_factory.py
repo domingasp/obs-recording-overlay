@@ -1,10 +1,10 @@
 from typing import Literal, Union
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QApplication, QMenu, QWidgetAction
-from src.system_tray.menu.menu_factory_protocol import IMenuFactory
-from src.theme_controller_protocol import IThemeController
-from src.utils import replace_template_placeholders
-from src.utils.stylesheet_loader import load_stylesheet
+
+from .menu_factory_protocol import IMenuFactory
+from src.controllers.theme_controller import IThemeController
+from src.utils import load_stylesheet, replace_template_placeholders
 
 
 class MenuFactory(IMenuFactory):

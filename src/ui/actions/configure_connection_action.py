@@ -1,6 +1,7 @@
 from PySide6.QtCore import QObject
 from PySide6.QtQml import QQmlApplicationEngine
-from src.system_tray.actions.tray_action_protocol import ITrayAction
+
+from .tray_action_protocol import ITrayAction
 
 
 class ConfigureConnectionAction(ITrayAction):

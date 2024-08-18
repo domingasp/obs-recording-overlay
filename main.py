@@ -8,14 +8,10 @@ from PySide6.QtGui import QIcon
 from PySide6.QtQml import QQmlApplicationEngine, qmlRegisterSingletonType
 from PySide6.QtWidgets import QApplication
 
-from src.system_tray.menu.menu_factory import MenuFactory
-from src.system_tray.system_tray_view import SystemTrayIconView
-from src.theme_controller import ThemeController
-from src.system_tray.actions.quit_action import QuitAction
-from src.system_tray.actions.configure_connection_action import (
-    ConfigureConnectionAction,
-)
-from src.system_tray.actions.tray_action_protocol import ITrayAction
+from src.ui.actions import ITrayAction, ConfigureConnectionAction, QuitAction
+from src.ui.menu import MenuFactory
+from src.ui.system_tray import SystemTrayIconView
+from src.controllers import ThemeController
 
 
 def create_tray_actions(

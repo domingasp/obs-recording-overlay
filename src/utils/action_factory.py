@@ -4,7 +4,7 @@ from PySide6.QtGui import QAction
 from PySide6.QtQuickWidgets import QQuickWidget
 from PySide6.QtWidgets import QWidgetAction
 
-from src.utils.create_colored_icon import create_colored_icon
+from .create_colored_icon import create_colored_icon
 
 
 def create_action(

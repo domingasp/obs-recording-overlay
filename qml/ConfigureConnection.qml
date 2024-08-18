@@ -7,7 +7,7 @@ import DefaultStyle 1.0
 
 Window {
     objectName: "configureConnectionWindow"
-    visible: true
+    visible: false
     width: 325
     height: 240
     minimumWidth: 325
