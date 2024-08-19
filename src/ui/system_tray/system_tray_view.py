@@ -3,14 +3,13 @@ from PySide6.QtGui import QAction, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtWidgets import QApplication, QSystemTrayIcon, QWidgetAction
 
-from .system_tray_view_protocol import ISystemTrayIconView
 from src.controllers.theme_controller import IThemeController
 from src.ui.menu import IMenuFactory
 from src.ui.actions import ITrayAction
 from src.utils import create_action, create_qml_action
 
 
-class SystemTrayIconView(ISystemTrayIconView):
+class SystemTrayIconView:
     def __init__(
         self,
         app: QApplication,

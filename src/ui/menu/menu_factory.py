@@ -2,12 +2,11 @@ from typing import Literal, Union
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QApplication, QMenu, QWidgetAction
 
-from .menu_factory_protocol import IMenuFactory
 from src.controllers.theme_controller import IThemeController
 from src.utils import load_stylesheet, replace_template_placeholders
 
 
-class MenuFactory(IMenuFactory):
+class MenuFactory:
     def __init__(self, app: QApplication, theme_controller: IThemeController):
         self.app = app
         self.theme_controller = theme_controller

@@ -1,9 +1,7 @@
 from PySide6.QtWidgets import QApplication
 
-from .tray_action_protocol import ITrayAction
 
-
-class QuitAction(ITrayAction):
+class QuitAction:
     def __init__(self, app: QApplication):
         self.app = app
 

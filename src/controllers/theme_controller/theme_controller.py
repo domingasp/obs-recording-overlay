@@ -2,10 +2,8 @@ from PySide6.QtCore import QUrl
 from PySide6.QtGui import QColor
 from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
 
-from src.controllers.theme_controller import IThemeController
 
-
-class ThemeController(IThemeController):
+class ThemeController:
     def __init__(self, qml_engine: QQmlApplicationEngine):
         self.qml_engine = qml_engine
 

@@ -11,7 +11,8 @@ from PySide6.QtWidgets import QApplication
 from src.ui.actions import ITrayAction, ConfigureConnectionAction, QuitAction
 from src.ui.menu import MenuFactory
 from src.ui.system_tray import SystemTrayIconView
-from src.controllers import ThemeController
+from src.controllers.theme_controller import ThemeController
+from src.controllers.settings_controller import SettingsController
 
 
 def create_tray_actions(
@@ -26,6 +27,9 @@ def create_tray_actions(
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     engine = QQmlApplicationEngine(app)
+    settings_controller = SettingsController(app)
+    context = engine.rootContext()
+    context.setContextProperty("settingsController", settings_controller)
     engine.addImportPath(":/")
 
     engine.load(":/qml/main.qml")

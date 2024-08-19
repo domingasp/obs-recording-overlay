@@ -6,6 +6,7 @@ import StyledControls 1.0
 import DefaultStyle 1.0
 
 Window {
+    id: configureConnectionWindow
     objectName: "configureConnectionWindow"
     visible: false
     width: 325
@@ -58,6 +59,7 @@ Window {
                         Layout.fillWidth: true
                         id: urlField
                         placeholderText: "Url"
+                        text: settingsController.url
                     }
                 }
 
@@ -85,6 +87,7 @@ Window {
                         id: portField
                         placeholderText: "Port"
                         validator: IntValidator {bottom: 0; top: 65535;} 
+                        text: settingsController.port
                     }
                 }
             }
@@ -101,6 +104,7 @@ Window {
                     id: passwordField
                     placeholderText: "Password"
                     echoMode: TextInput.Password
+                    text: settingsController.password
                 }
             }
 
@@ -109,6 +113,10 @@ Window {
                 Layout.fillHeight: true
                 text: "Save"
                 enabled: urlField.text.length > 0 && portField.text.length > 0 && passwordField.text.length > 0
+                onClicked: {
+                    settingsController.save_settings(urlField.text, portField.text, passwordField.text)
+                    configureConnectionWindow.visible = false
+                }
             }
         }
     }
