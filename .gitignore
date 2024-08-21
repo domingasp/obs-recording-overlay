@@ -4,5 +4,8 @@ __pycache__
 # rcc generated files
 *rc.py
 
+# logs
+*.log
+
 .venv
 .vscode/launch.json

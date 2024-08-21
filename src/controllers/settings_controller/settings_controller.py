@@ -1,14 +1,17 @@
 from PySide6.QtCore import Property, QObject, QSettings, Signal, Slot
 import keyring
 
+from src.events import IEventManager
+
 
 class SettingsController(QObject):
     urlChanged = Signal()
     portChanged = Signal()
     passwordChanged = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, event_manager: IEventManager, parent=None):
         super().__init__(parent)
+        self._event_manager = event_manager
         self._settings = QSettings("DomingasP", "OBSRecordingOverlay")
         self._service_name = "OBSRecordingOverlay"
 
@@ -48,3 +51,6 @@ class SettingsController(QObject):
         self.set_url(url)
         self.set_port(port)
         self.set_password(password)
+        self._event_manager.notify(
+            "credentials", {"url": url, "port": port, "password": password}
+        )

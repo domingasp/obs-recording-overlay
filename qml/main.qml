@@ -9,7 +9,7 @@ Window {
     color: "transparent"
 
     Overlay {
-        isVisible: overlayController.isVisible
+        isVisible: overlayController.isVisible && overlayController.state != "stopped"
         overlayImageSource: overlayController.state == "recording"
             ? "qrc:/assets/images/record-icon.png"
             : "qrc:/assets/images/paused-icon.png"

@@ -1,9 +1,12 @@
 from typing import Literal
-from src.controllers import OverlayController
+
+from src.controllers.overlay_controller.overlay_controller_protocol import (
+    IOverlayController,
+)
 
 
 class OverlayListener:
-    def __init__(self, overlay: OverlayController) -> None:
+    def __init__(self, overlay: IOverlayController) -> None:
         self._overlay = overlay
 
     def handle_event(
