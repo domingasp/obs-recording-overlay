@@ -8,12 +8,20 @@ from PySide6.QtGui import QIcon
 from PySide6.QtQml import QQmlApplicationEngine, qmlRegisterSingletonType
 from PySide6.QtWidgets import QApplication
 
-from src.ui.actions import ITrayAction, ConfigureConnectionAction, QuitAction
-from src.ui.menu import MenuFactory
-from src.ui.system_tray import SystemTrayIconView
-from src.controllers.theme_controller import ThemeController
-from src.controllers.settings_controller import SettingsController
-from src.controllers.overlay_controller import OverlayController
+from src.ui import (
+    ITrayAction,
+    ConfigureConnectionAction,
+    QuitAction,
+    MenuFactory,
+    SystemTrayIconView,
+)
+from src.controllers import (
+    ThemeController,
+    SettingsController,
+    OverlayController,
+    ConnectionStatusController,
+)
+from src.events import EventManager, OverlayListener, ConnectionStatusListener
 
 
 def create_tray_actions(
@@ -31,10 +39,25 @@ if __name__ == "__main__":
 
     settings_controller = SettingsController(app)
     overlay_controller = OverlayController(app)
+    connection_status_controller = ConnectionStatusController(app)
+
+    # region Events Setup
+    overlay_listener = OverlayListener(overlay=overlay_controller)
+    connection_status_listener = ConnectionStatusListener(
+        connection_status=connection_status_controller
+    )
+
+    event_manager = EventManager()
+    event_manager.register("connection", [connection_status_listener, overlay_listener])
+    event_manager.register("status", [overlay_listener])
+    # endregion
 
     context = engine.rootContext()
     context.setContextProperty("settingsController", settings_controller)
     context.setContextProperty("overlayController", overlay_controller)
+    context.setContextProperty(
+        "connectionStatusController", connection_status_controller
+    )
     engine.addImportPath(":/")
 
     engine.load(":/qml/main.qml")
@@ -54,6 +77,7 @@ if __name__ == "__main__":
         app,
         qml_engine=engine,
         theme_controller=theme_controller,
+        connection_status_controller=connection_status_controller,
         menu_factory=menu_factory,
         tray_actions=tray_actions,
         icon_path=":/assets/images/logo.png",

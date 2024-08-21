@@ -3,9 +3,8 @@ from PySide6.QtGui import QAction, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtWidgets import QApplication, QSystemTrayIcon, QWidgetAction
 
-from src.controllers.theme_controller import IThemeController
-from src.ui.menu import IMenuFactory
-from src.ui.actions import ITrayAction
+from src.controllers import IConnectionStatusController, IThemeController
+from src.ui import IMenuFactory, ITrayAction
 from src.utils import create_action, create_qml_action
 
 
@@ -16,6 +15,7 @@ class SystemTrayIconView:
         qml_engine: QQmlApplicationEngine,
         menu_factory: IMenuFactory,
         theme_controller: IThemeController,
+        connection_status_controller: IConnectionStatusController,
         tray_actions: dict[str, ITrayAction],
         icon_path: str,
     ):
@@ -23,6 +23,7 @@ class SystemTrayIconView:
         self.qml_engine = qml_engine
         self.menu_factory = menu_factory
         self.theme_controller = theme_controller
+        self.connection_status_controller = connection_status_controller
         self.tray_actions = tray_actions
         self.icon = icon_path
 
@@ -31,7 +32,12 @@ class SystemTrayIconView:
         self.tray_icon.setIcon(QIcon(self.icon))
 
         self.action_connection_status = create_qml_action(
-            self.tray_icon, "qrc:/qml/ConnectionStatus.qml"
+            self.tray_icon,
+            "qrc:/qml/ConnectionStatus.qml",
+            {
+                "name": "connectionStatusController",
+                "value": self.connection_status_controller,
+            },
         )
         self.action_configure_connection = create_action(
             "Configure Connection",

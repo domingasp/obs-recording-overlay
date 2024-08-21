@@ -2,7 +2,7 @@ from typing import Literal, Union
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QApplication, QMenu, QWidgetAction
 
-from src.controllers.theme_controller import IThemeController
+from src.controllers import IThemeController
 from src.utils import load_stylesheet, replace_template_placeholders
 
 

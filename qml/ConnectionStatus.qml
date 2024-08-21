@@ -6,7 +6,7 @@ import DefaultStyle 1.0
 Rectangle {
     id: connectionStatus
 
-    property bool isConnected: false
+    property bool isConnected: connectionStatusController.isConnected
     property color componentColor: connectionStatus.isConnected ? DefaultStyle.green6 : DefaultStyle.red6
 
     width: 100
