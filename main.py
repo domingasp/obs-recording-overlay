@@ -13,6 +13,7 @@ from src.ui.menu import MenuFactory
 from src.ui.system_tray import SystemTrayIconView
 from src.controllers.theme_controller import ThemeController
 from src.controllers.settings_controller import SettingsController
+from src.controllers.overlay_controller import OverlayController
 
 
 def create_tray_actions(
@@ -27,9 +28,13 @@ def create_tray_actions(
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     engine = QQmlApplicationEngine(app)
+
     settings_controller = SettingsController(app)
+    overlay_controller = OverlayController(app)
+
     context = engine.rootContext()
     context.setContextProperty("settingsController", settings_controller)
+    context.setContextProperty("overlayController", overlay_controller)
     engine.addImportPath(":/")
 
     engine.load(":/qml/main.qml")

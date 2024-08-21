@@ -9,7 +9,10 @@ Window {
     color: "transparent"
 
     Overlay {
-        overlayImageSource: "qrc:/assets/images/record-icon.png"
+        visible: overlayController.isVisible
+        overlayImageSource: overlayController.state == "recording"
+            ? "qrc:/assets/images/record-icon.png"
+            : "qrc:/assets/images/paused-icon.png"
     }
     
     ConfigureConnection {}
