@@ -1,11 +1,16 @@
 # Python generated files
 __pycache__
+*dist
+*build
 
 # rcc generated files
 *rc.py
 
 # logs
 *.log
+
+# Inno Setup generated files
+setup_output
 
 .venv
 .vscode/launch.json
