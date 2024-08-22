@@ -1,7 +1,17 @@
-.venv
+# Python generated files
 __pycache__
-.vscode
+*dist
+*build
+*.lock
 
-obs_password.txt
-obs_recording_state.txt
-logfile.log
+# rcc generated files
+*rc.py
+
+# logs
+*.log
+
+# Inno Setup generated files
+setup_output
+
+.venv
+.vscode/launch.json

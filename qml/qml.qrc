@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/qml">
+        <file>main.qml</file>
+        <file>Overlay.qml</file>
+        <file>ConnectionStatus.qml</file>
+        <file>ConfigureConnection.qml</file>
+        <file alias="HorizontalDivider.qml">components/HorizontalDivider.qml</file>
+    </qresource>
+
+    <qresource prefix="/DefaultStyle">
+        <file alias="DefaultStyle.qml">imports/DefaultStyle.qml</file>
+        <file alias="qmldir">imports/qmldir</file>
+    </qresource>
+
+    <qresource prefix="/StyledControls">
+        <file alias="Button.qml">styled_controls/Button.qml</file>
+        <file alias="Label.qml">styled_controls/Label.qml</file>
+        <file alias="TextField.qml">styled_controls/TextField.qml</file>
+        <file alias="qmldir">styled_controls/qmldir</file>
+    </qresource>
+</RCC>
