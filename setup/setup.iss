@@ -23,7 +23,7 @@ Source: "..\dist\app\_internal\*"; DestDir: "{app}\_internal"; Flags: ignorevers
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppName}.exe";
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppName}.exe";
-Name: "{userstartup}\{#MyAppName}"; Filename: "{app}\{#MyAppName}.exe"; Tasks:StartAtStartup;
+Name: "{commonstartup}\{#MyAppName}"; Filename: "{app}\{#MyAppName}.exe"; Tasks:StartAtStartup;
 
 [Tasks]
 Name: "StartAtStartup"; Description: "Start {#MyAppName} at Windows startup"; GroupDescription: "Additional icons:"; Flags: unchecked

@@ -2,6 +2,7 @@
 __pycache__
 *dist
 *build
+*.lock
 
 # rcc generated files
 *rc.py

@@ -7,6 +7,8 @@ from logging_config import setup_logging
 
 import sys
 import threading
+import os
+
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QIcon
 from PySide6.QtQml import QQmlApplicationEngine, qmlRegisterSingletonType
@@ -32,6 +34,7 @@ from src.events import (
     WebSocketListener,
 )
 from src.clients import WebSocketClient
+from src.utils import SingleInstance
 
 
 setup_logging()
@@ -48,6 +51,11 @@ def create_tray_actions(
 
 
 if __name__ == "__main__":
+    lockfile = os.path.join(
+        os.getenv("LOCALAPPDATA"), "OBS Recording Overlay", "obs-recording-app.lock"
+    )
+    instance = SingleInstance(lockfile)
+
     app = QApplication(sys.argv)
     engine = QQmlApplicationEngine(app)
 
