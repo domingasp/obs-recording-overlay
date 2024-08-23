@@ -1,0 +1,53 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.1.7
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Create virtual environment
+      run: python -m venv .venv
+
+    - name: Install dependencies
+      run: |
+        .venv\Scripts\activate.ps1
+        pip install -r requirements.txt
+
+    - name: Download and extract UPX
+      run: |
+        $url = 'https://github.com/upx/upx/releases/download/v4.2.4/upx-4.2.4-win64.zip'
+        $zipName = 'upx.zip'
+        Invoke-WebRequest -Uri $url -OutFile $zipName
+        Expand-Archive -Path $zipName -DestinationPath upx
+        mv upx/*/** upx
+
+    - name: Compile Qt resources
+      run: |
+        .venv\Scripts\activate.ps1
+        pyside6-rcc qml/qml.qrc -o qml/qml_rc.py
+        pyside6-rcc assets/assets.qrc -o assets/assets_rc.py
+        pyside6-rcc src/stylesheets.qrc -o src/stylesheets_rc.py
+
+    - name: PyInstaller compilation
+      run: |
+        .venv\Scripts\activate.ps1
+        pyinstaller --upx-dir upx ./obs-recording-overlay.app.spec
+
+    - name: Compile .iss to .exe installer
+      uses: Minionguyjpro/Inno-Setup-Action@v1.2.4
+      with:
+        path: setup/setup.iss
