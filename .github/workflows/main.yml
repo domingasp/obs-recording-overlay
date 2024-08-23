@@ -1,7 +1,6 @@
 name: Build and Release
 
 on:
-  workflow_dispatch:
   push:
     tags:
       - 'v*.*.*'
@@ -51,3 +50,8 @@ jobs:
       uses: Minionguyjpro/Inno-Setup-Action@v1.2.4
       with:
         path: setup/setup.iss
+
+    - name: Create GitHub release and Upload artifact
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "setup_output/*.exe"
