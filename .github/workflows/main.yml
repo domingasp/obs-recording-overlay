@@ -30,9 +30,10 @@ jobs:
     - name: Download and extract UPX
       run: |
         $url = 'https://github.com/upx/upx/releases/download/v4.2.4/upx-4.2.4-win64.zip'
-        $zipName = upx.zip
+        $zipName = 'upx.zip'
         Invoke-WebRequest -Uri $url -OutFile $zipName
         Expand-Archive -Path $zipName -DestinationPath upx
+        mv upx/*/** upx
 
     - name: Compile Qt resources
       run: |
