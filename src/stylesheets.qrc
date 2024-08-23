@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/stylesheets">
-        <file alias="system_tray.styles.qss">system_tray/system_tray.styles.qss</file>
+        <file alias="system_tray.styles.qss">ui/system_tray/system_tray.styles.qss</file>
     </qresource>
 </RCC>
     
