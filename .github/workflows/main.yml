@@ -5,6 +5,11 @@ on:
     tags:
       - 'v*.*.*'
 
+# For creating a release
+# https://github.com/ncipollo/release-action/issues/208
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
